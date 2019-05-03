@@ -1,13 +1,4 @@
----
-title: "Inference of germline mutational processes"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Inference of germline mutational processes}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
-
-
+# Inference of germline mutational processes
 
 The vignette describes inference of spatially-varying mutational processes. The guideline starts with matrix of regional mutation rates of mutation types in genomic regions, infers mutational components, estimates their biological relevance and groups in strand-independend/strand-dependent mutational processes. Finally, the guideline provides quality estimates of reconstructed processes using bootstrap and reflection correlations. 
 
