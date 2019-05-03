@@ -1,5 +1,4 @@
-#Inference of germline mutational processes
-
+# Inference of germline mutational processes
 
 The vignette describes inference of spatially-varying mutational processes. The guideline starts with matrix of regional mutation rates of mutation types in genomic regions, infers mutational components, estimates their biological relevance and groups in strand-independend/strand-dependent mutational processes. Finally, the guideline provides quality estimates of reconstructed processes using bootstrap and reflection correlations. 
 
@@ -60,12 +59,12 @@ head(icM[,1:4])
 
 |      |     comp.1|     comp.2|     comp.3|     comp.4|
 |:-----|----------:|----------:|----------:|----------:|
-|AAA_C | -0.1518822|  0.1471248|  0.0935838|  1.5667148|
-|AAC_C | -0.2755600| -0.1149889| -0.1862629|  1.7804012|
-|AAG_C | -0.3187923|  1.0127495| -0.1973558|  1.9464271|
-|AAT_C | -0.5558670| -0.3287671| -0.0797052|  0.9466719|
-|CAA_C | -0.0351220| -0.0821468| -0.1965866|  1.2996496|
-|CAC_C |  0.3389197|  0.1762089| -0.2458765| -0.2286360|
+|AAA_C |  0.1561095| -0.0811611|  0.0150918|  0.2402698|
+|AAC_C | -0.0874669| -0.1869301| -0.2633562|  0.0571817|
+|AAG_C |  1.0181631| -0.2543222| -0.2757838|  0.2118468|
+|AAT_C | -0.3327339| -0.5852982| -0.1747418| -0.0527771|
+|CAA_C | -0.0730356|  0.0184412| -0.2400683|  0.2539164|
+|CAC_C |  0.1277553|  0.3380247| -0.2356787|  1.5230192|
 
 Matrix of components intensities:
 
@@ -78,12 +77,12 @@ head(icS[,1:4])
 
 |     comp.1|     comp.2|     comp.3|     comp.4|
 |----------:|----------:|----------:|----------:|
-|  0.1796166|  0.0721438| -0.4479047|  0.1779447|
-|  0.5102889| -0.1320399| -0.1451787|  0.1336934|
-| -0.0918585| -0.0342882| -0.0810809| -0.0979801|
-|  0.0956659|  0.1482672| -0.2599748|  0.1147958|
-|  0.1351631|  0.3616662| -0.3003602|  0.3959587|
-|  0.1522517|  0.0206364| -0.0299601|  0.1796010|
+|  0.0761317|  0.1822939| -0.4542016|  0.0451050|
+| -0.1306416|  0.5153931| -0.1456649|  0.0761229|
+| -0.0335879| -0.0986314| -0.0813891| -0.0086307|
+|  0.1540814|  0.1043745| -0.2628011|  0.1553104|
+|  0.3756479|  0.1449107| -0.3151124|  0.0182006|
+|  0.0235961|  0.1611414| -0.0358629|  0.1210491|
 
 
 Of note, spectra and intensities have negative values due to Z-score transformation of mutation rates in the method. Positive (negative) values in spectra and intensities indicate higher (lower) values compared to genome-wide average.
@@ -143,9 +142,9 @@ head(ref.prop[[1]])
 |comp.1 |asymmetric |2        |
 |comp.2 |asymmetric |1        |
 |comp.3 |symmetric  |3        |
-|comp.4 |symmetric  |4        |
-|comp.5 |symmetric  |5        |
-|comp.6 |asymmetric |7        |
+|comp.4 |asymmetric |5        |
+|comp.5 |asymmetric |4        |
+|comp.6 |symmetric  |6        |
 
 A symmetric mutational component corresponds to a strand-independent mutational process, while a pair of two reflected components corresponds to a single strand-dependent mutational process. Annotation of mutational processes includes components that correspond to it (`comp.X` `comp.Y`):
 
@@ -159,9 +158,9 @@ head(ref.prop[[2]])
 |:---------|:------------------|:-------|:-------|
 |process.1 |strand-dependent   |1       |2       |
 |process.2 |strand-independent |3       |3       |
-|process.3 |strand-independent |4       |4       |
-|process.4 |strand-independent |5       |5       |
-|process.5 |strand-dependent   |6       |7       |
+|process.3 |strand-dependent   |4       |5       |
+|process.4 |strand-independent |6       |6       |
+|process.5 |strand-dependent   |10      |7       |
 |process.6 |strand-independent |8       |8       |
 
 Spectrum visualization of symmetric `comp. 3` with equal rates of complementary mutations: 
