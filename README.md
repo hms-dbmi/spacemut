@@ -4,7 +4,7 @@ Spatial analysis of genome mutation patterns
 Instructions on inference of mutational processes from spatial patterns are described in https://github.com/hms-dbmi/spacemut/blob/master/vignettes/inference_processes.md
 
 
-# Installation instructions
+## Installation instructions
 
 ```{r setup}
 install.packages("devtools")
