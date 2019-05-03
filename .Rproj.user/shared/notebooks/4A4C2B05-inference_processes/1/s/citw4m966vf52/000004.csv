@@ -1,0 +1,1 @@
+"0","boot <- spectra.bootstrap(icM,rate,n.boot=50,n.cores=20)"

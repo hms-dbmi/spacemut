@@ -1,0 +1,4 @@
+"0","comp.info <- extract.comp(rate,13)
+"
+"2","Error in svd(t) : infinite or missing values in 'x'
+"

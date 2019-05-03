@@ -1,0 +1,176 @@
+---
+title: "Inference of germline mutational processes"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Inference of germline mutational processes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "##"
+)
+```
+
+The vignette describes inference of spatially-varying mutational processes. The guideline starts with matrix of regional mutation rates of mutation types in genomic regions, infers mutational components, estimates their biological relevance and groups in strand-independend/strand-dependent mutational processes. Finally, the guideline provides quality estimates of reconstructed processes using bootstrap and reflection correlations. 
+
+## Loading the data
+
+```{r setup}
+library(spacemut)
+```
+
+Matrix of regional mutation rates is loaded from the local web server:
+
+```{r}
+info <- read.table("http://pklab.med.harvard.edu/ruslan/spacemut/TOPMed.30kb.txt",header=TRUE)
+dim(info)
+```
+
+```{r,results="hide"}
+head(info[,1:6])
+```
+
+```{r, echo=FALSE, results='asis'}
+knitr::kable(head(info[,1:6]))
+```
+
+Retain only columns of regional mutation rates:
+```{r}
+rate <- info[,-c(1:3)]
+```
+
+## Inference of mutational components and processes
+
+Function `extract.comp` decomposes observed regional mutation rates in a small number of mutational components using independent component analysis. Below we estimate 13 mutational components:
+
+```{r}
+comp.info <- extract.comp(rate,13)
+```
+
+Output object `comp.info` consists of matrices of components spectra  and intensities. Matrix of components spectra:
+
+```{r,results="hide"}
+icM <- comp.info[[1]]
+head(icM[,1:4])
+```
+
+```{r, echo=FALSE, results='asis'}
+knitr::kable(head(icM[,1:4]))
+```
+
+Matrix of components intensities:
+
+```{r,results="hide"}
+icS <- comp.info[[2]]
+head(icS[,1:4])
+```
+
+```{r, echo=FALSE, results='asis'}
+knitr::kable(head(icS[,1:4]))
+```
+
+
+Of note, spectra and intensities have negative values due to Z-score transformation of mutation rates in the method. Positive (negative) values in spectra and intensities indicate higher (lower) values compared to genome-wide average.
+Reflection matrix of correlations between spectrum and reverse complementary spectrum of each pair of components is used to separate extracted components in strand symmetric, asymmetric and noise:
+
+```{r,warning=FALSE,results="hide",fig.width = 5, fig.height = 5}
+plot.reflection.matrix(icM)
+```
+
+
+For example, `comp. 3` is symmetic, since it has spectrum reverse complementary to itself:
+
+```{r,results="hide",fig.width = 4, fig.height = 4}
+reflection.scatter(3,3,icM)
+```
+
+
+On the other hand `comp. 1` is not symmetrical:
+```{r,results="hide",fig.width = 4, fig.height = 4}
+reflection.scatter(1,1,icM)
+```
+
+However, `comp. 1` is reflected to `comp. 2` spectrum representing a single strand-dependent process:
+
+```{r,results="hide",fig.width = 4, fig.height = 4}
+reflection.scatter(1,2,icM)
+```
+
+Function `reflection.test` formally classifies components in symmetric/asymmetric, noise and combine them in mutaitonal processes.
+
+```{r,results="hide"}
+ref.prop <- reflection.test(icM)
+```
+
+Object `ref.prop` contains classification of components, including symmetric/asymmteric `type` and reflected component `ref.comp` for each component:
+```{r,results="hide"}
+head(ref.prop[[1]])
+```
+
+```{r,echo=FALSE, results="asis"}
+knitr::kable(head(ref.prop[[1]]))
+```
+
+A symmetric mutational component corresponds to a strand-independent mutational process, while a pair of two reflected components corresponds to a single strand-dependent mutational process. Annotation of mutational processes includes components that correspond to it (`comp.X` `comp.Y`):
+
+```{r,results="hide"}
+head(ref.prop[[2]])
+```
+
+```{r,echo=FALSE, results="asis"}
+knitr::kable(head(ref.prop[[2]]))
+```
+
+Spectrum visualization of symmetric `comp. 3` with equal rates of complementary mutations: 
+
+```{r,warning=FALSE,results="hide",fig.width = 6, fig.height = 4}
+draw.signature(icM[,3])
+```
+
+Spectrum visualization of asymmetric `comp. 1` with imbalanced rates of complementary mutations: 
+
+```{r,warning=FALSE,results="hide",fig.width = 6, fig.height = 4}
+draw.signature(icM[,1])
+```
+
+Routine `plot.intensities` enables exploration of spatial variation in component intensity along the genome. Intensity of maternal process, estimated as sum of intensities of `comp. 4` and `comp. 5`, along left arm of chromosome 8 is shown below:
+```{r,results="hide",fig.width = 6, fig.height = 3}
+plot.intensities(icS[,4]+icS[,5], info, chr=8, start=0,end=4e+7,  span.wind=30)
+```
+
+Finally, robustness of components can be evaluated using statistical bootstrap of genomic regions or reflection correlation. Rounine  `spectra.bootstrap` estimates Spearman correlations between a component in original and `n.boot` bootstrapped inferences:
+
+```{r,results="hide"}
+boot <- spectra.bootstrap(icM,rate,n.boot=500,n.cores=20)
+```
+
+Visualization of summarized statistics:
+```{r,results="hide",fig.width = 5, fig.height = 4}
+visualize.bootstrap(boot,icM=icM)
+```
+
+
+## Estimate number of components to extract
+Number 13 of initially extracted components may seems rather arbitrary. Reflection property suggests a natural criterion to evaluate number of components to extract that maximumizes number of components having reflection property. More specifically, routine `select.ncomponents` extracts a range of components from `n.min` and `n.max` and evaluates optimal choice:
+
+```{r,results="hide"}
+stat.extract <- select.ncomponents(rate,n.min=2,n.max=35,cutoff=0.8,n.cores=20)
+
+head(stat.extract)
+```
+
+```{r,echo=FALSE, results="asis"}
+knitr::kable(head(stat.extract,3))
+```
+
+Number of components and processes having reflection property depending on number of extracted components:
+```{r,results="hide",fig.width = 7, fig.height = 4.5}
+show.optimal.comp(stat.extract)
+```
+
+
+
+

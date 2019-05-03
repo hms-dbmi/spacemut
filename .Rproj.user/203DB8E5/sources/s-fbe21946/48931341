@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1556840787162.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "48931341",
+    "lastKnownWriteTime" : 1556849905,
+    "last_content_update" : 1556849905701,
+    "path" : "/d0/home/solrust/mutations/spacemut/vignettes/inference_processes.Rmd",
+    "project_path" : null,
+    "properties" : {
+        "cursorPosition" : "146,44",
+        "last_setup_crc32" : "fbe21946954dcab",
+        "scrollLine" : "142"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 3,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_markdown"
+}
