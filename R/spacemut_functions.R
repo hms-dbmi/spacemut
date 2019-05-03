@@ -6,7 +6,7 @@
 extract.comp <- function(rate,n.comp){
   t <- apply(rate,2,function(x) (x-mean(x))/sd(x) )
   wh <- svd(t)
-  ic <- ica::icafast( (wh$v)[,1:n.comp],nc=n.comp)
+  ic <- ica::icafast( (wh$v)[,1:n.comp],nc=n.comp,fun="kur")
   icM <- ic$S; rownames(icM) <- colnames(t)
   icS <- ( wh$u[,1:n.comp] %*% diag(wh$d)[1:n.comp,1:n.comp] %*% ic$M  )
 
