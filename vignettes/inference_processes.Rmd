@@ -50,6 +50,13 @@ Function `extract.comp` decomposes observed regional mutation rates in a small n
 comp.info <- extract.comp(rate,13)
 ```
 
+We rearrange components to have their order consistent with the paper:
+```{r}
+process.order <- c(1,2,7,10,13,4,5,3,6,12,9,11,8)
+comp.info <- rearrange.components(comp.info,process.order)
+```
+
+
 Output object `comp.info` consists of matrices of components spectra  and intensities. Matrix of components spectra:
 
 ```{r,results="hide"}

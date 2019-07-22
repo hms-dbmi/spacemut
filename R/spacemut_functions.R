@@ -3,25 +3,30 @@
 ##' @param n.comp number of components
 ##' @return matrices of components spectra and intensities
 ##' @export
-extract.comp <- function(rate,n.comp){
-  t <- apply(rate,2,function(x) (x-mean(x))/sd(x) )
+extract.comp <- function (rate, n.comp){
+  t <- apply(rate, 2, function(x) (x - mean(x))/sd(x))
   wh <- svd(t)
-  ic <- ica::icafast( (wh$v)[,1:n.comp],nc=n.comp)#,fun="kur")
-  icM <- ic$S; rownames(icM) <- colnames(t)
-  icS <- ( wh$u[,1:n.comp] %*% diag(wh$d)[1:n.comp,1:n.comp] %*% ic$M  )
 
-  # reverse spectra and intensities to make overall positive third moment
-  moms.M <- apply(icM,2,function(x){mean((x-mean(x))^3)/sd(x)^3})
-  moms.S <- apply(icS,2,function(x){mean((x-mean(x))^3)/sd(x)^3})
+  X <- (wh$v)[, 1:n.comp]
+  ic <- ica::icafast( (X), nc = n.comp)
+  icM <- t(t(ic$S) + ( t(solve(t(ic$M)))%*%apply(X,2,mean))[,1])
+
+  rownames(icM) <- colnames(t)
+  icS <- (wh$u[, 1:n.comp] %*% diag(wh$d)[1:n.comp, 1:n.comp] %*% ic$M)
+  moms.M <- apply(icM, 2, function(x) {
+    mean((x - mean(x))^3)/sd(x)^3
+  })
+  moms.S <- apply(icS, 2, function(x) {
+    mean((x - mean(x))^3)/sd(x)^3
+  })
   moms <- moms.M + moms.S
-  icM <- t(t(icM)*sign(moms))
-  icS <- t(t(icS)*sign(moms))
-
-  colnames(icS) <- paste("comp.",1:ncol(icS),sep="")
-  colnames(icM) <-  paste("comp.",1:ncol(icM),sep="")
-
-  return(list(icM,icS))
+  icM <- t(t(icM) * sign(moms))
+  icS <- t(t(icS) * sign(moms))
+  colnames(icS) <- paste("comp.", 1:ncol(icS), sep = "")
+  colnames(icM) <- paste("comp.", 1:ncol(icM), sep = "")
+  return(list(icM, icS))
 }
+
 
 
 ##' Plot heatmap of refelction correlation between all pairs of components
@@ -261,6 +266,16 @@ revert.context <- function(sign.names){
 }
 
 
+rearrange.components <- function(comp.info,process.order){
+  if ( min(process.order) < 1 | max(process.order) > ncol(comp.info[[1]]) ) {stop("wrong order indices")}
+  icM <- comp.info[[1]][,process.order]
+  icS <- comp.info[[2]][,process.order]
+
+  colnames(icS) <- paste("comp.", 1:ncol(icS), sep = "")
+  colnames(icM) <- paste("comp.", 1:ncol(icM), sep = "")
+  return(list(icM, icS))
+
+}
 
 ##'  Parsing coded mutation type
 ##'  E.g. converts 'TCT_A' to a vector c('TCT','T','C>A','T')

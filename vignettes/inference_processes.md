@@ -1,4 +1,13 @@
-# Inference of germline mutational processes
+---
+title: "Inference of germline mutational processes"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Inference of germline mutational processes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+
 
 The vignette describes inference of spatially-varying mutational processes. The guideline starts with matrix of regional mutation rates of mutation types in genomic regions, infers mutational components, estimates their biological relevance and groups in strand-independend/strand-dependent mutational processes. Finally, the guideline provides quality estimates of reconstructed processes using bootstrap and reflection correlations. 
 
@@ -14,6 +23,9 @@ Matrix of regional mutation rates is loaded from the local web server:
 
 ```r
 info <- read.table("http://pklab.med.harvard.edu/ruslan/spacemut/TOPMed.30kb.txt",header=TRUE)
+## Warning in file(file, "rt"): cannot open URL 'http://pklab.med.harvard.edu/
+## ruslan/spacemut/TOPMed.30kb.txt': HTTP status was '404 Not Found'
+## Error in file(file, "rt"): cannot open the connection to 'http://pklab.med.harvard.edu/ruslan/spacemut/TOPMed.30kb.txt'
 dim(info)
 ## [1] 87496   195
 ```
@@ -48,6 +60,14 @@ Function `extract.comp` decomposes observed regional mutation rates in a small n
 comp.info <- extract.comp(rate,13)
 ```
 
+We rearrange components to have their order consistent with the paper:
+
+```r
+process.order <- c(1,2,7,10,13,4,5,3,6,12,9,11,8)
+comp.info <- rearrange.components(comp.info,process.order)
+```
+
+
 Output object `comp.info` consists of matrices of components spectra  and intensities. Matrix of components spectra:
 
 
@@ -57,14 +77,14 @@ head(icM[,1:4])
 ```
 
 
-|      |     comp.1|     comp.2|     comp.3|     comp.4|
-|:-----|----------:|----------:|----------:|----------:|
-|AAA_C |  0.1561095| -0.0811611|  0.0150918|  0.2402698|
-|AAC_C | -0.0874669| -0.1869301| -0.2633562|  0.0571817|
-|AAG_C |  1.0181631| -0.2543222| -0.2757838|  0.2118468|
-|AAT_C | -0.3327339| -0.5852982| -0.1747418| -0.0527771|
-|CAA_C | -0.0730356|  0.0184412| -0.2400683|  0.2539164|
-|CAC_C |  0.1277553|  0.3380247| -0.2356787|  1.5230192|
+|      |     comp.1|     comp.2|    comp.3|    comp.4|
+|:-----|----------:|----------:|---------:|---------:|
+|AAA_C |  0.3306581|  0.1311669| 0.7493560| 1.6414072|
+|AAC_C |  0.0870816|  0.0253979| 0.8077041| 1.0817167|
+|AAG_C |  1.1927116| -0.0419941| 0.9862699| 0.5674709|
+|AAT_C | -0.1581854| -0.3729701| 1.8378227| 0.6929886|
+|CAA_C |  0.1015129|  0.2307693| 1.1593478| 1.0513072|
+|CAC_C |  0.3023039|  0.5503527| 1.0156275| 0.9442106|
 
 Matrix of components intensities:
 
@@ -77,12 +97,12 @@ head(icS[,1:4])
 
 |     comp.1|     comp.2|     comp.3|     comp.4|
 |----------:|----------:|----------:|----------:|
-|  0.0761317|  0.1822939| -0.4542016|  0.0451050|
-| -0.1306416|  0.5153931| -0.1456649|  0.0761229|
-| -0.0335879| -0.0986314| -0.0813891| -0.0086307|
-|  0.1540814|  0.1043745| -0.2628011|  0.1553104|
-|  0.3756479|  0.1449107| -0.3151124|  0.0182006|
-|  0.0235961|  0.1611414| -0.0358629|  0.1210491|
+|  0.0761317|  0.1822939| -0.0031319| -0.1293959|
+| -0.1306416|  0.5153931| -0.0772653| -0.0365320|
+| -0.0335879| -0.0986314|  0.0025490| -0.1257208|
+|  0.1540814|  0.1043745|  0.4088748|  0.2376230|
+|  0.3756479|  0.1449107|  0.8889042|  0.5202943|
+|  0.0235961|  0.1611414|  0.3633402|  0.4415499|
 
 
 Of note, spectra and intensities have negative values due to Z-score transformation of mutation rates in the method. Positive (negative) values in spectra and intensities indicate higher (lower) values compared to genome-wide average.
@@ -93,7 +113,7 @@ Reflection matrix of correlations between spectrum and reverse complementary spe
 plot.reflection.matrix(icM)
 ```
 
-![plot of chunk unnamed-chunk-11](figure/unnamed-chunk-11-1.png)
+![plot of chunk unnamed-chunk-43](figure/unnamed-chunk-43-1.png)
 
 
 For example, `comp. 3` is symmetic, since it has spectrum reverse complementary to itself:
@@ -103,7 +123,7 @@ For example, `comp. 3` is symmetic, since it has spectrum reverse complementary 
 reflection.scatter(3,3,icM)
 ```
 
-![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12-1.png)
+![plot of chunk unnamed-chunk-44](figure/unnamed-chunk-44-1.png)
 
 
 On the other hand `comp. 1` is not symmetrical:
@@ -112,7 +132,7 @@ On the other hand `comp. 1` is not symmetrical:
 reflection.scatter(1,1,icM)
 ```
 
-![plot of chunk unnamed-chunk-13](figure/unnamed-chunk-13-1.png)
+![plot of chunk unnamed-chunk-45](figure/unnamed-chunk-45-1.png)
 
 However, `comp. 1` is reflected to `comp. 2` spectrum representing a single strand-dependent process:
 
@@ -121,7 +141,7 @@ However, `comp. 1` is reflected to `comp. 2` spectrum representing a single stra
 reflection.scatter(1,2,icM)
 ```
 
-![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14-1.png)
+![plot of chunk unnamed-chunk-46](figure/unnamed-chunk-46-1.png)
 
 Function `reflection.test` formally classifies components in symmetric/asymmetric, noise and combine them in mutaitonal processes.
 
@@ -141,10 +161,10 @@ head(ref.prop[[1]])
 |:------|:----------|:--------|
 |comp.1 |asymmetric |2        |
 |comp.2 |asymmetric |1        |
-|comp.3 |symmetric  |3        |
-|comp.4 |asymmetric |5        |
-|comp.5 |asymmetric |4        |
-|comp.6 |symmetric  |6        |
+|comp.3 |asymmetric |4        |
+|comp.4 |asymmetric |3        |
+|comp.5 |symmetric  |5        |
+|comp.6 |asymmetric |7        |
 
 A symmetric mutational component corresponds to a strand-independent mutational process, while a pair of two reflected components corresponds to a single strand-dependent mutational process. Annotation of mutational processes includes components that correspond to it (`comp.X` `comp.Y`):
 
@@ -157,11 +177,11 @@ head(ref.prop[[2]])
 |          |type               |comp. X |comp. Y |
 |:---------|:------------------|:-------|:-------|
 |process.1 |strand-dependent   |1       |2       |
-|process.2 |strand-independent |3       |3       |
-|process.3 |strand-dependent   |4       |5       |
-|process.4 |strand-independent |6       |6       |
-|process.5 |strand-dependent   |10      |7       |
-|process.6 |strand-independent |8       |8       |
+|process.2 |strand-dependent   |3       |4       |
+|process.3 |strand-independent |5       |5       |
+|process.4 |strand-dependent   |6       |7       |
+|process.5 |strand-independent |8       |8       |
+|process.6 |strand-independent |9       |9       |
 
 Spectrum visualization of symmetric `comp. 3` with equal rates of complementary mutations: 
 
@@ -170,7 +190,7 @@ Spectrum visualization of symmetric `comp. 3` with equal rates of complementary 
 draw.signature(icM[,3])
 ```
 
-![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-20-1.png)
+![plot of chunk unnamed-chunk-52](figure/unnamed-chunk-52-1.png)
 
 Spectrum visualization of asymmetric `comp. 1` with imbalanced rates of complementary mutations: 
 
@@ -179,7 +199,7 @@ Spectrum visualization of asymmetric `comp. 1` with imbalanced rates of compleme
 draw.signature(icM[,1])
 ```
 
-![plot of chunk unnamed-chunk-21](figure/unnamed-chunk-21-1.png)
+![plot of chunk unnamed-chunk-53](figure/unnamed-chunk-53-1.png)
 
 Routine `plot.intensities` enables exploration of spatial variation in component intensity along the genome. Intensity of maternal process, estimated as sum of intensities of `comp. 4` and `comp. 5`, along left arm of chromosome 8 is shown below:
 
@@ -187,7 +207,7 @@ Routine `plot.intensities` enables exploration of spatial variation in component
 plot.intensities(icS[,4]+icS[,5], info, chr=8, start=0,end=4e+7,  span.wind=30)
 ```
 
-![plot of chunk unnamed-chunk-22](figure/unnamed-chunk-22-1.png)
+![plot of chunk unnamed-chunk-54](figure/unnamed-chunk-54-1.png)
 
 Finally, robustness of components can be evaluated using statistical bootstrap of genomic regions or reflection correlation. Rounine  `spectra.bootstrap` estimates Spearman correlations between a component in original and `n.boot` bootstrapped inferences:
 
@@ -202,7 +222,7 @@ Visualization of summarized statistics:
 visualize.bootstrap(boot,icM=icM)
 ```
 
-![plot of chunk unnamed-chunk-24](figure/unnamed-chunk-24-1.png)
+![plot of chunk unnamed-chunk-56](figure/unnamed-chunk-56-1.png)
 
 
 ## Estimate number of components to extract
@@ -228,7 +248,7 @@ Number of components and processes having reflection property depending on numbe
 show.optimal.comp(stat.extract)
 ```
 
-![plot of chunk unnamed-chunk-27](figure/unnamed-chunk-27-1.png)
+![plot of chunk unnamed-chunk-59](figure/unnamed-chunk-59-1.png)
 
 
 
