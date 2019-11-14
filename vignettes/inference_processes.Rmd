@@ -52,7 +52,7 @@ comp.info <- extract.comp(rate,13)
 
 We rearrange components to have their order and signs consistent with the paper:
 ```{r}
-process.order <- c(1,2,9,10,13,8,4,5,3,6,12,11,7)#c(1,2,7,10,13,4,5,3,6,12,9,11,8)
+process.order <- c(1,2,9,10,13,8,4,5,3,6,12,11,7)
 sign.change <- 7
 comp.info <- rearrange.components(comp.info,process.order,sign.change)
 ```

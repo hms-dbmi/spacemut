@@ -1,4 +1,4 @@
-#Inference of germline mutational processes
+# Inference of germline mutational processes
 
 The vignette describes inference of spatially-varying mutational processes. The guideline starts with matrix of regional mutation rates of mutation types in genomic regions, infers mutational components, estimates their biological relevance and groups in strand-independend/strand-dependent mutational processes. Finally, the guideline provides quality estimates of reconstructed processes using bootstrap and reflection correlations. 
 
@@ -51,7 +51,7 @@ comp.info <- extract.comp(rate,13)
 We rearrange components to have their order and signs consistent with the paper:
 
 ```r
-process.order <- c(1,2,9,10,13,8,4,5,3,6,12,11,7)#c(1,2,7,10,13,4,5,3,6,12,9,11,8)
+process.order <- c(1,2,9,10,13,8,4,5,3,6,12,11,7)
 sign.change <- 7
 comp.info <- rearrange.components(comp.info,process.order,sign.change)
 ```
