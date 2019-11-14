@@ -3,12 +3,12 @@
 ##' @param n.comp number of components
 ##' @return matrices of components spectra and intensities
 ##' @export
-extract.comp <- function (rate, n.comp){
+extract.comp <- function (rate, n.comp,fun="kur"){
   t <- apply(rate, 2, function(x) (x - mean(x))/sd(x))
   wh <- svd(t)
 
-  X <- (wh$v)[, 1:n.comp]
-  ic <- ica::icafast( (X), nc = n.comp)
+  X <- (wh$v)[, 1:(n.comp)]
+  ic <- ica::icafast( (X), nc = n.comp,fun=fun)
   icM <- t(t(ic$S) + ( t(solve(t(ic$M)))%*%apply(X,2,mean))[,1])
 
   rownames(icM) <- colnames(t)
@@ -24,6 +24,9 @@ extract.comp <- function (rate, n.comp){
   icS <- t(t(icS) * sign(moms))
   colnames(icS) <- paste("comp.", 1:ncol(icS), sep = "")
   colnames(icM) <- paste("comp.", 1:ncol(icM), sep = "")
+  fact <- apply(icM,2,function(x) sqrt(sum(x^2)) )
+  icM <- t(t(icM)/fact)
+  icS <- t(t(icS)*fact)
   return(list(icM, icS))
 }
 
@@ -37,7 +40,7 @@ extract.comp <- function (rate, n.comp){
 plot.reflection.matrix <- function(icM,par=FALSE){
   mat = (cor(icM,icM[revert.context(rownames(icM)),],method="spearman"));
   if (par==FALSE) {par(mar=c(7,8,2,2),mgp=c(5,1,0))}
-  image( mat^1,axes=FALSE,names=TRUE,col=adjustcolor( colorRampPalette(c("grey95","grey80","darkred"))(n = 60) ,1),
+  image( mat^1,axes=FALSE,names=TRUE,col=adjustcolor( colorRampPalette(c("grey95","grey90","grey85","darkred"))(n = 60) ,1),
          xlab="spectrum",ylab="reverse compementary\nspectrum",cex.lab=1.5,main="Reflection matrix",font.main=1,cex.main=2)
   box(lwd=2)
   axis( 1,outer=FALSE, at= seq(0,1,length.out = nrow(mat)),labels = rownames(mat),las=2,
@@ -68,7 +71,7 @@ reflection.scatter <- function(i,j,icM,par=FALSE){
 ##' @param cutoff cutoff on reflection property
 ##' @return matrices of components classification and processes annotation in strand-independent/strand-dependent/noise/ambiguous
 ##' @export
-reflection.test <- function(icM,cutoff=0.8){
+reflection.test <- function(icM,cutoff=0.7){
   # reflection matrix
   mat = (cor(icM,icM[revert.context(rownames(icM)),],method="spearman"));
 
@@ -119,7 +122,7 @@ select.ncomponents <- function(rate,n.min=2,n.max=30,cutoff=0.8,n.cores=1){
   xx <- do.call(rbind,parallel::mclapply(n.min:n.max,function(n){
     comp.info <- extract.comp(rate,n)
     icM <- comp.info[[1]]
-    plot.reflection.matrix(icM)
+    #plot.reflection.matrix(icM)
     ref.prop <- reflection.test(icM,cutoff)
     c( n,sum(!is.na(ref.prop[[1]]$ref.comp)),nrow(ref.prop[[2]]) )
   }))
@@ -231,7 +234,7 @@ visualize.bootstrap <- function(boot,icM=NULL,par=FALSE){
   if (par==FALSE){par(mar=c(5,7,0.5,0.5),mgp=c(4,1,0))}
   # draw boxplot of bootstrap
   boxplot(boot[],
-          ylim=c(0.6,1),xlab="component",ylab="spectrum similarity,\nSpearman correlation",names=1:13,cex.lab=1.5,cex.axis=1.5,
+          ylim=c(0,1),xlab="component",ylab="spectrum similarity,\nSpearman correlation",names=1:13,cex.lab=1.5,cex.axis=1.5,
           range=1e-6,outline=FALSE,boxwex=0.6,staplewex=0,outwex=0,lwd=1,col=adjustcolor("blue",0.1),border="blue" )#,
   # add bootstrap points
   yy <- unlist(lapply(1:ncol(boot),function(i) boot[,i]))
@@ -243,7 +246,7 @@ visualize.bootstrap <- function(boot,icM=NULL,par=FALSE){
     mat = (cor(icM[,],icM[revert.context(rownames(icM)),],method="spearman")); #mat[mat < 0] = 0
     cor.refl <- apply(mat,1,function(x) max(abs(x)) )
     stripchart(cor.refl~ xx, vertical = TRUE,method = "jitter", add = TRUE, pch = 19,cex=1.0, col = 'red')
-    legend("bottomright",c("reflection","bootstrap"),pch=19,col=c("red","blue"),bty="n",cex=1.5)
+    legend("bottomleft",c("reflection","bootstrap"),pch=19,col=c("red","blue"),bty="n",cex=1.5)
   }
 }
 
@@ -266,13 +269,17 @@ revert.context <- function(sign.names){
 }
 
 
-rearrange.components <- function(comp.info,process.order){
+rearrange.components <- function(comp.info,process.order,sign.change=NULL){
   if ( min(process.order) < 1 | max(process.order) > ncol(comp.info[[1]]) ) {stop("wrong order indices")}
   icM <- comp.info[[1]][,process.order]
   icS <- comp.info[[2]][,process.order]
 
   colnames(icS) <- paste("comp.", 1:ncol(icS), sep = "")
   colnames(icM) <- paste("comp.", 1:ncol(icM), sep = "")
+  if (!is.null(sign.change)){
+    icM[,sign.change] <- -icM[,sign.change]
+    icS[,sign.change] <- -icS[,sign.change]
+  }
   return(list(icM, icS))
 
 }

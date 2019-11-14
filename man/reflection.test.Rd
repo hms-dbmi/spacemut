@@ -4,7 +4,7 @@
 \alias{reflection.test}
 \title{Classify components and group in processes based on reflection property}
 \usage{
-reflection.test(icM, cutoff = 0.8)
+reflection.test(icM, cutoff = 0.7)
 }
 \arguments{
 \item{icM}{matrix of spectra of mutational components}

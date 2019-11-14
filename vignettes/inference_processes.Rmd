@@ -25,7 +25,7 @@ library(spacemut)
 Matrix of regional mutation rates is loaded from the local web server:
 
 ```{r}
-info <- read.table("http://pklab.med.harvard.edu/ruslan/spacemut/TOPMed.30kb.txt",header=TRUE)
+info <- read.table("http://pklab.med.harvard.edu/ruslan/spacemut/TOPMed_30kb.txt",header=TRUE)
 dim(info)
 ```
 
@@ -50,10 +50,11 @@ Function `extract.comp` decomposes observed regional mutation rates in a small n
 comp.info <- extract.comp(rate,13)
 ```
 
-We rearrange components to have their order consistent with the paper:
+We rearrange components to have their order and signs consistent with the paper:
 ```{r}
-process.order <- c(1,2,7,10,13,4,5,3,6,12,9,11,8)
-comp.info <- rearrange.components(comp.info,process.order)
+process.order <- c(1,2,9,10,13,8,4,5,3,6,12,11,7)#c(1,2,7,10,13,4,5,3,6,12,9,11,8)
+sign.change <- 7
+comp.info <- rearrange.components(comp.info,process.order,sign.change)
 ```
 
 
@@ -88,10 +89,10 @@ plot.reflection.matrix(icM)
 ```
 
 
-For example, `comp. 3` is symmetic, since it has spectrum reverse complementary to itself:
+For example, `comp. 10` is symmetic, since it has spectrum reverse complementary to itself:
 
 ```{r,results="hide",fig.width = 4, fig.height = 4}
-reflection.scatter(3,3,icM)
+reflection.scatter(10,10,icM)
 ```
 
 
@@ -131,10 +132,10 @@ head(ref.prop[[2]])
 knitr::kable(head(ref.prop[[2]]))
 ```
 
-Spectrum visualization of symmetric `comp. 3` with equal rates of complementary mutations: 
+Spectrum visualization of symmetric `comp. 10` with equal rates of complementary mutations: 
 
 ```{r,warning=FALSE,results="hide",fig.width = 6, fig.height = 4}
-draw.signature(icM[,3])
+draw.signature(icM[,10])
 ```
 
 Spectrum visualization of asymmetric `comp. 1` with imbalanced rates of complementary mutations: 
@@ -145,13 +146,13 @@ draw.signature(icM[,1])
 
 Routine `plot.intensities` enables exploration of spatial variation in component intensity along the genome. Intensity of maternal process, estimated as sum of intensities of `comp. 4` and `comp. 5`, along left arm of chromosome 8 is shown below:
 ```{r,results="hide",fig.width = 6, fig.height = 3}
-plot.intensities(icS[,4]+icS[,5], info, chr=8, start=0,end=4e+7,  span.wind=30)
+plot.intensities(icS[,7]+icS[,8], info, chr=8, start=0,end=4e+7,  span.wind=30)
 ```
 
 Finally, robustness of components can be evaluated using statistical bootstrap of genomic regions or reflection correlation. Rounine  `spectra.bootstrap` estimates Spearman correlations between a component in original and `n.boot` bootstrapped inferences:
 
 ```{r,results="hide"}
-boot <- spectra.bootstrap(icM,rate,n.boot=500,n.cores=20)
+boot <- spectra.bootstrap(icM,rate,n.boot=100,n.cores=20)
 ```
 
 Visualization of summarized statistics:
@@ -164,7 +165,7 @@ visualize.bootstrap(boot,icM=icM)
 Number 13 of initially extracted components may seems rather arbitrary. Reflection property suggests a natural criterion to evaluate number of components to extract that maximumizes number of components having reflection property. More specifically, routine `select.ncomponents` extracts a range of components from `n.min` and `n.max` and evaluates optimal choice:
 
 ```{r,results="hide"}
-stat.extract <- select.ncomponents(rate,n.min=2,n.max=35,cutoff=0.8,n.cores=20)
+stat.extract <- select.ncomponents(rate,n.min=2,n.max=35,cutoff=0.7,n.cores=20)
 
 head(stat.extract)
 ```

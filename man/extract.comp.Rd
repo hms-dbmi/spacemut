@@ -4,7 +4,7 @@
 \alias{extract.comp}
 \title{Infer mutational components}
 \usage{
-extract.comp(rate, n.comp)
+extract.comp(rate, n.comp, fun = "kur")
 }
 \arguments{
 \item{rate}{matrix of mutation rates of mutation types in genomic windows}

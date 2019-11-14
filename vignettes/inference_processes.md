@@ -1,13 +1,4 @@
----
-title: "Inference of germline mutational processes"
-output: rmarkdown::html_vignette
-vignette: >
-  %\VignetteIndexEntry{Inference of germline mutational processes}
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteEncoding{UTF-8}
----
-
-
+#Inference of germline mutational processes
 
 The vignette describes inference of spatially-varying mutational processes. The guideline starts with matrix of regional mutation rates of mutation types in genomic regions, infers mutational components, estimates their biological relevance and groups in strand-independend/strand-dependent mutational processes. Finally, the guideline provides quality estimates of reconstructed processes using bootstrap and reflection correlations. 
 
@@ -22,12 +13,9 @@ Matrix of regional mutation rates is loaded from the local web server:
 
 
 ```r
-info <- read.table("http://pklab.med.harvard.edu/ruslan/spacemut/TOPMed.30kb.txt",header=TRUE)
-## Warning in file(file, "rt"): cannot open URL 'http://pklab.med.harvard.edu/
-## ruslan/spacemut/TOPMed.30kb.txt': HTTP status was '404 Not Found'
-## Error in file(file, "rt"): cannot open the connection to 'http://pklab.med.harvard.edu/ruslan/spacemut/TOPMed.30kb.txt'
+info <- read.table("http://pklab.med.harvard.edu/ruslan/spacemut/TOPMed_30kb.txt",header=TRUE)
 dim(info)
-## [1] 87496   195
+## [1] 88600   195
 ```
 
 
@@ -38,12 +26,12 @@ head(info[,1:6])
 
 | chr|  start|    end|     AAA_C|     AAC_C|     AAG_C|
 |---:|------:|------:|---------:|---------:|---------:|
-|   1| 810000| 840000| 0.0131313| 0.0148515| 0.0196078|
-|   1| 840000| 870000| 0.0171359| 0.0096852| 0.0055659|
-|   1| 870000| 900000| 0.0183968| 0.0081081| 0.0107527|
-|   1| 900000| 930000| 0.0305882| 0.0191571| 0.0225000|
-|   1| 930000| 960000| 0.0284698| 0.0124481| 0.0469613|
-|   1| 960000| 990000| 0.0198413| 0.0186047| 0.0272109|
+|   1| 750000| 780000| 0.0076628| 0.0261780| 0.0078740|
+|   1| 780000| 810000| 0.0123574| 0.0154867| 0.0252427|
+|   1| 810000| 840000| 0.0080808| 0.0099010| 0.0178253|
+|   1| 840000| 870000| 0.0134639| 0.0096852| 0.0037106|
+|   1| 870000| 900000| 0.0170828| 0.0054054| 0.0107527|
+|   1| 900000| 930000| 0.0235294| 0.0191571| 0.0200000|
 
 Retain only columns of regional mutation rates:
 
@@ -60,11 +48,12 @@ Function `extract.comp` decomposes observed regional mutation rates in a small n
 comp.info <- extract.comp(rate,13)
 ```
 
-We rearrange components to have their order consistent with the paper:
+We rearrange components to have their order and signs consistent with the paper:
 
 ```r
-process.order <- c(1,2,7,10,13,4,5,3,6,12,9,11,8)
-comp.info <- rearrange.components(comp.info,process.order)
+process.order <- c(1,2,9,10,13,8,4,5,3,6,12,11,7)#c(1,2,7,10,13,4,5,3,6,12,9,11,8)
+sign.change <- 7
+comp.info <- rearrange.components(comp.info,process.order,sign.change)
 ```
 
 
@@ -79,12 +68,12 @@ head(icM[,1:4])
 
 |      |     comp.1|     comp.2|    comp.3|    comp.4|
 |:-----|----------:|----------:|---------:|---------:|
-|AAA_C |  0.3306581|  0.1311669| 0.7493560| 1.6414072|
-|AAC_C |  0.0870816|  0.0253979| 0.8077041| 1.0817167|
-|AAG_C |  1.1927116| -0.0419941| 0.9862699| 0.5674709|
-|AAT_C | -0.1581854| -0.3729701| 1.8378227| 0.6929886|
-|CAA_C |  0.1015129|  0.2307693| 1.1593478| 1.0513072|
-|CAC_C |  0.3023039|  0.5503527| 1.0156275| 0.9442106|
+|AAA_C | -0.0227970|  0.0210365| 0.0714241| 0.0537104|
+|AAC_C | -0.0056140| -0.0001517| 0.0645502| 0.0415889|
+|AAG_C | -0.0133682|  0.0911298| 0.0433930| 0.0490204|
+|AAT_C | -0.0288110| -0.0234684| 0.0501471| 0.0771393|
+|CAA_C | -0.0038961|  0.0110071| 0.0547108| 0.0633748|
+|CAC_C |  0.0284111|  0.0243246| 0.0492576| 0.0444556|
 
 Matrix of components intensities:
 
@@ -95,14 +84,14 @@ head(icS[,1:4])
 ```
 
 
-|     comp.1|     comp.2|     comp.3|     comp.4|
-|----------:|----------:|----------:|----------:|
-|  0.0761317|  0.1822939| -0.0031319| -0.1293959|
-| -0.1306416|  0.5153931| -0.0772653| -0.0365320|
-| -0.0335879| -0.0986314|  0.0025490| -0.1257208|
-|  0.1540814|  0.1043745|  0.4088748|  0.2376230|
-|  0.3756479|  0.1449107|  0.8889042|  0.5202943|
-|  0.0235961|  0.1611414|  0.3633402|  0.4415499|
+|     comp.1|     comp.2|    comp.3|     comp.4|
+|----------:|----------:|---------:|----------:|
+| -2.5667558|  2.1301591| -7.092460| -2.4447915|
+| -1.3024708|  2.6084784| -6.621879| -1.8728265|
+|  2.3178210|  0.9493667| -4.632615| -1.5597619|
+|  6.0239180| -1.9011326| -2.252194| -2.1290525|
+| -1.6055082| -0.6831389| -4.140801| -0.1678556|
+|  0.4618606|  2.2245285|  5.335315| 10.8125570|
 
 
 Of note, spectra and intensities have negative values due to Z-score transformation of mutation rates in the method. Positive (negative) values in spectra and intensities indicate higher (lower) values compared to genome-wide average.
@@ -113,17 +102,17 @@ Reflection matrix of correlations between spectrum and reverse complementary spe
 plot.reflection.matrix(icM)
 ```
 
-![plot of chunk unnamed-chunk-43](figure/unnamed-chunk-43-1.png)
+![plot of chunk unnamed-chunk-52](figure/unnamed-chunk-52-1.png)
 
 
-For example, `comp. 3` is symmetic, since it has spectrum reverse complementary to itself:
+For example, `comp. 10` is symmetic, since it has spectrum reverse complementary to itself:
 
 
 ```r
-reflection.scatter(3,3,icM)
+reflection.scatter(10,10,icM)
 ```
 
-![plot of chunk unnamed-chunk-44](figure/unnamed-chunk-44-1.png)
+![plot of chunk unnamed-chunk-53](figure/unnamed-chunk-53-1.png)
 
 
 On the other hand `comp. 1` is not symmetrical:
@@ -132,7 +121,7 @@ On the other hand `comp. 1` is not symmetrical:
 reflection.scatter(1,1,icM)
 ```
 
-![plot of chunk unnamed-chunk-45](figure/unnamed-chunk-45-1.png)
+![plot of chunk unnamed-chunk-54](figure/unnamed-chunk-54-1.png)
 
 However, `comp. 1` is reflected to `comp. 2` spectrum representing a single strand-dependent process:
 
@@ -141,7 +130,7 @@ However, `comp. 1` is reflected to `comp. 2` spectrum representing a single stra
 reflection.scatter(1,2,icM)
 ```
 
-![plot of chunk unnamed-chunk-46](figure/unnamed-chunk-46-1.png)
+![plot of chunk unnamed-chunk-55](figure/unnamed-chunk-55-1.png)
 
 Function `reflection.test` formally classifies components in symmetric/asymmetric, noise and combine them in mutaitonal processes.
 
@@ -164,7 +153,7 @@ head(ref.prop[[1]])
 |comp.3 |asymmetric |4        |
 |comp.4 |asymmetric |3        |
 |comp.5 |symmetric  |5        |
-|comp.6 |asymmetric |7        |
+|comp.6 |symmetric  |6        |
 
 A symmetric mutational component corresponds to a strand-independent mutational process, while a pair of two reflected components corresponds to a single strand-dependent mutational process. Annotation of mutational processes includes components that correspond to it (`comp.X` `comp.Y`):
 
@@ -179,18 +168,18 @@ head(ref.prop[[2]])
 |process.1 |strand-dependent   |1       |2       |
 |process.2 |strand-dependent   |3       |4       |
 |process.3 |strand-independent |5       |5       |
-|process.4 |strand-dependent   |6       |7       |
-|process.5 |strand-independent |8       |8       |
+|process.4 |strand-independent |6       |6       |
+|process.5 |strand-dependent   |7       |8       |
 |process.6 |strand-independent |9       |9       |
 
-Spectrum visualization of symmetric `comp. 3` with equal rates of complementary mutations: 
+Spectrum visualization of symmetric `comp. 10` with equal rates of complementary mutations: 
 
 
 ```r
-draw.signature(icM[,3])
+draw.signature(icM[,10])
 ```
 
-![plot of chunk unnamed-chunk-52](figure/unnamed-chunk-52-1.png)
+![plot of chunk unnamed-chunk-61](figure/unnamed-chunk-61-1.png)
 
 Spectrum visualization of asymmetric `comp. 1` with imbalanced rates of complementary mutations: 
 
@@ -199,21 +188,21 @@ Spectrum visualization of asymmetric `comp. 1` with imbalanced rates of compleme
 draw.signature(icM[,1])
 ```
 
-![plot of chunk unnamed-chunk-53](figure/unnamed-chunk-53-1.png)
+![plot of chunk unnamed-chunk-62](figure/unnamed-chunk-62-1.png)
 
 Routine `plot.intensities` enables exploration of spatial variation in component intensity along the genome. Intensity of maternal process, estimated as sum of intensities of `comp. 4` and `comp. 5`, along left arm of chromosome 8 is shown below:
 
 ```r
-plot.intensities(icS[,4]+icS[,5], info, chr=8, start=0,end=4e+7,  span.wind=30)
+plot.intensities(icS[,7]+icS[,8], info, chr=8, start=0,end=4e+7,  span.wind=30)
 ```
 
-![plot of chunk unnamed-chunk-54](figure/unnamed-chunk-54-1.png)
+![plot of chunk unnamed-chunk-63](figure/unnamed-chunk-63-1.png)
 
 Finally, robustness of components can be evaluated using statistical bootstrap of genomic regions or reflection correlation. Rounine  `spectra.bootstrap` estimates Spearman correlations between a component in original and `n.boot` bootstrapped inferences:
 
 
 ```r
-boot <- spectra.bootstrap(icM,rate,n.boot=500,n.cores=20)
+boot <- spectra.bootstrap(icM,rate,n.boot=100,n.cores=20)
 ```
 
 Visualization of summarized statistics:
@@ -222,7 +211,7 @@ Visualization of summarized statistics:
 visualize.bootstrap(boot,icM=icM)
 ```
 
-![plot of chunk unnamed-chunk-56](figure/unnamed-chunk-56-1.png)
+![plot of chunk unnamed-chunk-65](figure/unnamed-chunk-65-1.png)
 
 
 ## Estimate number of components to extract
@@ -230,7 +219,7 @@ Number 13 of initially extracted components may seems rather arbitrary. Reflecti
 
 
 ```r
-stat.extract <- select.ncomponents(rate,n.min=2,n.max=35,cutoff=0.8,n.cores=20)
+stat.extract <- select.ncomponents(rate,n.min=2,n.max=35,cutoff=0.7,n.cores=20)
 
 head(stat.extract)
 ```
@@ -248,7 +237,7 @@ Number of components and processes having reflection property depending on numbe
 show.optimal.comp(stat.extract)
 ```
 
-![plot of chunk unnamed-chunk-59](figure/unnamed-chunk-59-1.png)
+![plot of chunk unnamed-chunk-68](figure/unnamed-chunk-68-1.png)
 
 
 
