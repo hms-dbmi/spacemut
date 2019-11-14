@@ -132,7 +132,7 @@ reflection.scatter(1,2,icM)
 
 ![plot of chunk unnamed-chunk-55](figure/unnamed-chunk-55-1.png)
 
-Function `reflection.test` formally classifies components in symmetric/asymmetric, noise and combine them in mutaitonal processes.
+Function `reflection.test` formally classifies components in symmetric/asymmetric, noise and combine them in mutational processes.
 
 
 ```r
