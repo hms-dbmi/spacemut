@@ -107,7 +107,7 @@ However, `comp. 1` is reflected to `comp. 2` spectrum representing a single stra
 reflection.scatter(1,2,icM)
 ```
 
-Function `reflection.test` formally classifies components in symmetric/asymmetric, noise and combine them in mutaitonal processes.
+Function `reflection.test` formally classifies components in symmetric/asymmetric, noise and combine them in mutational processes.
 
 ```{r,results="hide"}
 ref.prop <- reflection.test(icM)

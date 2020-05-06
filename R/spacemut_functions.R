@@ -1,18 +1,29 @@
 ##' Infer mutational components
 ##' @param rate matrix of mutation rates of mutation types in genomic windows
 ##' @param n.comp number of components
+##' @param method decomposition method. 'spectra' and 'intensity' for ICA of spectra and intensities respectively. 'PCA' for PCA
 ##' @return matrices of components spectra and intensities
 ##' @export
-extract.comp <- function (rate, n.comp,fun="kur"){
+extract.comp <- function (rate, n.comp,method="spectra",fun="kur"){
   t <- apply(rate, 2, function(x) (x - mean(x))/sd(x))
   wh <- svd(t)
 
   X <- (wh$v)[, 1:(n.comp)]
-  ic <- ica::icafast( (X), nc = n.comp,fun=fun)
-  icM <- t(t(ic$S) + ( t(solve(t(ic$M)))%*%apply(X,2,mean))[,1])
 
+  if (method=="spectra"){
+    ic <- ica::icafast( ((wh$v)[, 1:(n.comp)]), nc = n.comp,fun=fun)
+    icM <- t(t(ic$S) + ( t(solve(t(ic$M)))%*%apply(X,2,mean))[,1])
+    icS <- (wh$u[, 1:n.comp] %*% diag(wh$d)[1:n.comp, 1:n.comp] %*% ic$M)
+  }else if (method=="intensity"){
+    ic <- ica::icafast( (wh$u)[, 1:(n.comp)], nc = n.comp,fun=fun)
+    icM <- wh$v[,1:n.comp]%*%diag(wh$d[1:n.comp])%*%ic$M
+    icS <- ic$S
+  }else if (method=="PCA"){
+    icM <- wh$v[,1:n.comp]
+    icS <- wh$u[,1:n.comp]%*%diag(wh$d[1:n.comp])
+  }
   rownames(icM) <- colnames(t)
-  icS <- (wh$u[, 1:n.comp] %*% diag(wh$d)[1:n.comp, 1:n.comp] %*% ic$M)
+
   moms.M <- apply(icM, 2, function(x) {
     mean((x - mean(x))^3)/sd(x)^3
   })
@@ -29,7 +40,6 @@ extract.comp <- function (rate, n.comp,fun="kur"){
   icS <- t(t(icS)*fact)
   return(list(icM, icS))
 }
-
 
 
 ##' Plot heatmap of refelction correlation between all pairs of components
@@ -73,7 +83,7 @@ reflection.scatter <- function(i,j,icM,par=FALSE){
 ##' @export
 reflection.test <- function(icM,cutoff=0.7){
   # reflection matrix
-  mat = (cor(icM,icM[revert.context(rownames(icM)),],method="spearman"));
+  mat = (cor(icM,icM[spacemut::revert.context(rownames(icM)),],method="spearman"));
 
   # classify components
   prop <- do.call(rbind,lapply(1:nrow(mat),function(i){
@@ -104,11 +114,15 @@ reflection.test <- function(icM,cutoff=0.7){
     }
   }))
   proc.real <- data.frame(unique(proc.real))
-  colnames(proc.real) <- c("type","comp. X","comp. Y")
-  rownames(proc.real) <- paste("process.",1:nrow(proc.real),sep="")
-
+  if (!is.null(proc.real)){
+    if ( nrow(proc.real) > 0){
+      colnames(proc.real) <- c("type","comp. X","comp. Y")
+      rownames(proc.real) <- paste("process.",1:nrow(proc.real),sep="")
+    }
+  }
   return( list(comp = prop, proc = proc.real) )
 }
+
 
 ##' Estimate number of components with reflected property and processes for different input extracted components
 ##' @param  rate matrix of mutation rates of mutation types in genomic windows
