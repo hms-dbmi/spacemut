@@ -1,5 +1,5 @@
 # spacemut
-Spatial analysis of genome mutation patterns
+Spatial analysis of germline mutation patterns
 
 Instructions on inference of mutational processes from spatial patterns are described in https://github.com/hms-dbmi/spacemut/blob/master/vignettes/inference_processes.md
 
