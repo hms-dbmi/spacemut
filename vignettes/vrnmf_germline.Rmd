@@ -34,7 +34,7 @@ Volume-regularized NMF is applied to the co-occurence mutation matrix stored in 
 
 ```{r,results="hide"}
 vr <- volnmf_main(vol.info, n.comp = 14, wvol = 7.9e-3, seed = 1,
-                  n.iter = 3e+3, vol.iter = 1e+1, c.iter = 1e+1, 
+                  n.iter = 3e+3, vol.iter = 2e+1, c.iter = 2e+1, 
                   verbose = FALSE)
 ```
 
@@ -77,13 +77,11 @@ str(intensities.info)
 ```
 
 ```{r}
-intensities <- cbind(rate.info[,1:3],t(intensities.info$intensities))
 intensities <- t(intensities.info$intensities)
-
 ```
 
 Intensities can now be visualized:
 ```{r,results="hide",fig.width = 6, fig.height = 3}
-plot.intensities(intensities[,6], rate.info, chr=16, start=0,end=4e+7,  span.wind=30)
+plot.intensities(intensities[,13], rate.info, chr=16, start=0,end=4e+7,  span.wind=30)
 ```
 
