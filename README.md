@@ -29,7 +29,7 @@ Below we provide description of data files for TOPMed and gnomAD datset.
 
 Inference of mutational components from TOPMed dataset can be reproduced with a few simple steps using [_vrnmf_ R package](https://github.com/kharchenkolab/vrnmf). 
 
-Following installation of _vrnmf_ and _spacemut_ R packages (below), one can proceed to a guide through [application of vrnmf to inference of mutational processes in germline](https://github.com/hms-dbmi/spacemut/blob/master/vignettes/vrnmf_germline.md).
+Following installation of _vrnmf_ and _spacemut_ R packages (below), one can proceed to a guide through [application of vrnmf to inference of mutational processes in germline](https://github.com/hms-dbmi/spacemut/blob/revised/vignettes/vrnmf_germline.md).
 
 ### Installation instructions
 
@@ -51,6 +51,6 @@ library(spacemut)
 ## Available code
 
 Code of simulations of mutational processes is available here:
-https://github.com/hms-dbmi/spacemut/tree/master/R/simulations_topmed.R
+https://github.com/hms-dbmi/spacemut/tree/revised/R/simulations_topmed.R
 
 Other code is available upon the request.
