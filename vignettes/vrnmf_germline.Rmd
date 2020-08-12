@@ -33,7 +33,7 @@ vol.info <- vol_preprocess(rate)
 Volume-regularized NMF is applied to the co-occurence mutation matrix stored in the object `vol.info` to infer `n.comp = 14` components using volume weight `wvol = 7.9e-3` (see the manuscript for the motivation behind the choice of parameters). Alternating optimization was executed for `n.iter = 3e+3` iterations with `vol.iter` and `c.iter` updates of matrices inside each iteration:
 
 ```{r,results="hide"}
-vr <- volnmf_main(vol.info, n.comp = 14, wvol = 7.9e-3,
+vr <- volnmf_main(vol.info, n.comp = 14, wvol = 7.9e-3, seed = 1,
                   n.iter = 3e+3, vol.iter = 1e+1, c.iter = 1e+1, 
                   verbose = FALSE)
 ```
@@ -46,7 +46,7 @@ rownames(S) <- colnames(rate)
 colnames(S) <- paste("comp.",1:ncol(S))
 ```
 
-Note that order of components (columns of `S`) is arbitrary and may not be consistent with that used in the manuscript. 
+Note that order of components (columns of `S`) is arbitrary, and may not be consistent with that used in the manuscript. 
 Spectra can now be visualized:
 ```{r,warning=FALSE, message=FALSE, fig.width = 4, fig.height = 4}
 draw.signature(S[,2])
@@ -59,7 +59,7 @@ plot.reflection.matrix(S)
 
 And visualize reflections of individual components:
 ```{r,results="hide",fig.width = 4, fig.height = 4}
-reflection.scatter(3,3,S)
+reflection.scatter(2,3,S)
 ```
 
 ## Estimation of intensities of mutational components
@@ -84,6 +84,6 @@ intensities <- t(intensities.info$intensities)
 
 Intensities can now be visualized:
 ```{r,results="hide",fig.width = 6, fig.height = 3}
-plot.intensities(intensities[,2], rate.info, chr=16, start=0,end=4e+7,  span.wind=30)
+plot.intensities(intensities[,6], rate.info, chr=16, start=0,end=4e+7,  span.wind=30)
 ```
 
