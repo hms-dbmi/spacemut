@@ -45,7 +45,7 @@ Volume-regularized NMF is applied to the co-occurence mutation matrix stored in 
 
 ```r
 vr <- volnmf_main(vol.info, n.comp = 14, wvol = 7.9e-3, seed = 1,
-                  n.iter = 3e+3, vol.iter = 1e+1, c.iter = 1e+1, 
+                  n.iter = 3e+3, vol.iter = 2e+1, c.iter = 2e+1, 
                   verbose = FALSE)
 ```
 
@@ -65,7 +65,7 @@ Spectra can now be visualized:
 draw.signature(S[,2])
 ```
 
-![plot of chunk unnamed-chunk-33](figure/unnamed-chunk-33-1.png)
+![plot of chunk unnamed-chunk-21](figure/unnamed-chunk-21-1.png)
 
 Additionally, we can explore reflection properties of components:
 
@@ -73,7 +73,7 @@ Additionally, we can explore reflection properties of components:
 plot.reflection.matrix(S)
 ```
 
-![plot of chunk unnamed-chunk-34](figure/unnamed-chunk-34-1.png)
+![plot of chunk unnamed-chunk-22](figure/unnamed-chunk-22-1.png)
 
 And visualize reflections of individual components:
 
@@ -81,7 +81,7 @@ And visualize reflections of individual components:
 reflection.scatter(2,3,S)
 ```
 
-![plot of chunk unnamed-chunk-35](figure/unnamed-chunk-35-1.png)
+![plot of chunk unnamed-chunk-23](figure/unnamed-chunk-23-1.png)
 
 ## Estimation of intensities of mutational components
 
@@ -101,25 +101,24 @@ str(intensities.info)
 
 ```
 ## List of 3
-##  $ intensities: num [1:14, 1:263870] 8.32 34.79 6.08 6.41 2.88 ...
+##  $ intensities: num [1:14, 1:263870] 8.54 33.29 4.23 7.15 3.03 ...
 ##   ..- attr(*, "dimnames")=List of 2
 ##   .. ..$ : chr [1:14] "comp1" "comp2" "comp3" "comp4" ...
 ##   .. ..$ : NULL
-##  $ spec.offset: num [1:192] 0.54 0.286 0.44 0.325 0.528 ...
+##  $ spec.offset: num [1:192] 0.623 0.336 0.476 0.41 0.555 ...
 ##  $ int.offset : num [1:263870] 1 1 1 1 1 1 1 1 1 1 ...
 ```
 
 
 ```r
-intensities <- cbind(rate.info[,1:3],t(intensities.info$intensities))
 intensities <- t(intensities.info$intensities)
 ```
 
 Intensities can now be visualized:
 
 ```r
-plot.intensities(intensities[,6], rate.info, chr=16, start=0,end=4e+7,  span.wind=30)
+plot.intensities(intensities[,13], rate.info, chr=16, start=0,end=4e+7,  span.wind=30)
 ```
 
-![plot of chunk unnamed-chunk-39](figure/unnamed-chunk-39-1.png)
+![plot of chunk unnamed-chunk-27](figure/unnamed-chunk-27-1.png)
 
