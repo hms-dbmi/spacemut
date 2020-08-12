@@ -65,7 +65,7 @@ Spectra can now be visualized:
 draw.signature(S[,2])
 ```
 
-![plot of chunk unnamed-chunk-56](figure/unnamed-chunk-56-1.png)
+![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14-1.png)
 
 Additionally, we can explore reflection properties of components:
 
@@ -73,7 +73,7 @@ Additionally, we can explore reflection properties of components:
 plot.reflection.matrix(S)
 ```
 
-![plot of chunk unnamed-chunk-57](figure/unnamed-chunk-57-1.png)
+![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15-1.png)
 
 And visualize reflections of individual components:
 
@@ -81,7 +81,7 @@ And visualize reflections of individual components:
 reflection.scatter(3,3,S)
 ```
 
-![plot of chunk unnamed-chunk-58](figure/unnamed-chunk-58-1.png)
+![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16-1.png)
 
 ## Estimation of intensities of mutational components
 
@@ -91,25 +91,35 @@ Given known spectra of mutational components, intensities can then be obtained u
 ```r
 intensities.info <- factor_intensities(as.matrix(vr$C), t(as.matrix(vol.info$X.process)), 
                                   fit.nmf = FALSE, fit.factor = TRUE, 
-                                  n.iter = 1e+2, verbose = TRUE) 
+                                  n.iter = 1e+2, verbose = FALSE) 
 ```
 
-![plot of chunk unnamed-chunk-59](figure/unnamed-chunk-59-1.png)![plot of chunk unnamed-chunk-59](figure/unnamed-chunk-59-2.png)![plot of chunk unnamed-chunk-59](figure/unnamed-chunk-59-3.png)![plot of chunk unnamed-chunk-59](figure/unnamed-chunk-59-4.png)![plot of chunk unnamed-chunk-59](figure/unnamed-chunk-59-5.png)![plot of chunk unnamed-chunk-59](figure/unnamed-chunk-59-6.png)![plot of chunk unnamed-chunk-59](figure/unnamed-chunk-59-7.png)![plot of chunk unnamed-chunk-59](figure/unnamed-chunk-59-8.png)![plot of chunk unnamed-chunk-59](figure/unnamed-chunk-59-9.png)![plot of chunk unnamed-chunk-59](figure/unnamed-chunk-59-10.png)![plot of chunk unnamed-chunk-59](figure/unnamed-chunk-59-11.png)![plot of chunk unnamed-chunk-59](figure/unnamed-chunk-59-12.png)![plot of chunk unnamed-chunk-59](figure/unnamed-chunk-59-13.png)![plot of chunk unnamed-chunk-59](figure/unnamed-chunk-59-14.png)![plot of chunk unnamed-chunk-59](figure/unnamed-chunk-59-15.png)![plot of chunk unnamed-chunk-59](figure/unnamed-chunk-59-16.png)![plot of chunk unnamed-chunk-59](figure/unnamed-chunk-59-17.png)![plot of chunk unnamed-chunk-59](figure/unnamed-chunk-59-18.png)![plot of chunk unnamed-chunk-59](figure/unnamed-chunk-59-19.png)
 
 ```r
 str(intensities.info)
 ```
 
+```
+## List of 3
+##  $ intensities: num [1:14, 1:263870] 1.16 9.91 23.67 0 10.59 ...
+##   ..- attr(*, "dimnames")=List of 2
+##   .. ..$ : chr [1:14] "comp1" "comp2" "comp3" "comp4" ...
+##   .. ..$ : NULL
+##  $ spec.offset: num [1:192] 0.644 0.342 0.513 0.308 0.573 ...
+##  $ int.offset : num [1:263870] 1 1 1 1 1 1 1 1 1 1 ...
+```
+
 
 ```r
 intensities <- cbind(rate.info[,1:3],t(intensities.info$intensities))
-intensities <-t(intensities.info$intensities)
+intensities <- t(intensities.info$intensities)
 ```
 
+Intensities can now be visualized:
 
 ```r
-plot.intensities(intensities[,2], rate.info, chr=16, start=0,end=4e+7,  span.wind=100)
+plot.intensities(intensities[,2], rate.info, chr=16, start=0,end=4e+7,  span.wind=30)
 ```
 
-![plot of chunk unnamed-chunk-61](figure/unnamed-chunk-61-1.png)
+![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-20-1.png)
 

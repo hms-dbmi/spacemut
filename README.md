@@ -17,7 +17,7 @@ Below we provide description of data files for TOPMed and gnomAD datset.
 
 ### gnomAD dataset
 
-[gnomAD_100kb.txt](http://pklab.med.harvard.edu/ruslan/spacemut/tracks/gnomAD_100kb.txt) contains estimated mutation frequency of 192 mutation type across 263,870 non-intersecting 100 kb genomic window. 
+[gnomAD_100kb.txt](http://pklab.med.harvard.edu/ruslan/spacemut/tracks/gnomAD_100kb.txt) contains estimated mutation frequency of 192 mutation type across 26,625 non-intersecting 100 kb genomic window. 
 
 [gnomAD_100kb_spectra.txt](http://pklab.med.harvard.edu/ruslan/spacemut/tracks/gnomAD_100kb_spectra.txt) contains spectra of 12 mutational components. 
 
