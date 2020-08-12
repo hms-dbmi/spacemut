@@ -44,7 +44,7 @@ Volume-regularized NMF is applied to the co-occurence mutation matrix stored in 
 
 
 ```r
-vr <- volnmf_main(vol.info, n.comp = 14, wvol = 7.9e-3,
+vr <- volnmf_main(vol.info, n.comp = 14, wvol = 7.9e-3, seed = 1,
                   n.iter = 3e+3, vol.iter = 1e+1, c.iter = 1e+1, 
                   verbose = FALSE)
 ```
@@ -58,14 +58,14 @@ rownames(S) <- colnames(rate)
 colnames(S) <- paste("comp.",1:ncol(S))
 ```
 
-Note that order of components (columns of `S`) is arbitrary and may not be consistent with that used in the manuscript. 
+Note that order of components (columns of `S`) is arbitrary, and may not be consistent with that used in the manuscript. 
 Spectra can now be visualized:
 
 ```r
 draw.signature(S[,2])
 ```
 
-![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14-1.png)
+![plot of chunk unnamed-chunk-33](figure/unnamed-chunk-33-1.png)
 
 Additionally, we can explore reflection properties of components:
 
@@ -73,15 +73,15 @@ Additionally, we can explore reflection properties of components:
 plot.reflection.matrix(S)
 ```
 
-![plot of chunk unnamed-chunk-15](figure/unnamed-chunk-15-1.png)
+![plot of chunk unnamed-chunk-34](figure/unnamed-chunk-34-1.png)
 
 And visualize reflections of individual components:
 
 ```r
-reflection.scatter(3,3,S)
+reflection.scatter(2,3,S)
 ```
 
-![plot of chunk unnamed-chunk-16](figure/unnamed-chunk-16-1.png)
+![plot of chunk unnamed-chunk-35](figure/unnamed-chunk-35-1.png)
 
 ## Estimation of intensities of mutational components
 
@@ -101,11 +101,11 @@ str(intensities.info)
 
 ```
 ## List of 3
-##  $ intensities: num [1:14, 1:263870] 1.16 9.91 23.67 0 10.59 ...
+##  $ intensities: num [1:14, 1:263870] 8.32 34.79 6.08 6.41 2.88 ...
 ##   ..- attr(*, "dimnames")=List of 2
 ##   .. ..$ : chr [1:14] "comp1" "comp2" "comp3" "comp4" ...
 ##   .. ..$ : NULL
-##  $ spec.offset: num [1:192] 0.644 0.342 0.513 0.308 0.573 ...
+##  $ spec.offset: num [1:192] 0.54 0.286 0.44 0.325 0.528 ...
 ##  $ int.offset : num [1:263870] 1 1 1 1 1 1 1 1 1 1 ...
 ```
 
@@ -118,8 +118,8 @@ intensities <- t(intensities.info$intensities)
 Intensities can now be visualized:
 
 ```r
-plot.intensities(intensities[,2], rate.info, chr=16, start=0,end=4e+7,  span.wind=30)
+plot.intensities(intensities[,6], rate.info, chr=16, start=0,end=4e+7,  span.wind=30)
 ```
 
-![plot of chunk unnamed-chunk-20](figure/unnamed-chunk-20-1.png)
+![plot of chunk unnamed-chunk-39](figure/unnamed-chunk-39-1.png)
 
