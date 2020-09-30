@@ -53,6 +53,6 @@ library(spacemut)
 ## Available code
 
 Code of simulations of mutational processes is available here:
-https://github.com/hms-dbmi/spacemut/tree/master/R/simulations_topmed.R
+http://pklab.med.harvard.edu/ruslan/spacemut/simulations_topmed.R
 
 Other code is available upon the request.
