@@ -12,7 +12,6 @@ Below we provide description of data files for TOPMed and gnomAD datset.
 [TOPMed_10kb.txt](http://pklab.med.harvard.edu/ruslan/spacemut/tracks_update/TOPMed_10kb.txt) contains estimated mutation frequency of 192 mutation type across 263,870 non-intersecting 10 kb genomic window. Each row of a matrix contains information on a window: chromosome, start and end positions and 192 mutation frequencies.
 
 #### Standard deviation normalization
-
 Before inference of mutational components each mutation rate was normalized to its standard deviation (sd) across genomic windows. Below are presented tracks of mutational components for sd-normalized mutation rates (these tracks are used in the paper):
 
 [TOPMed_10kb_spectra_sd.txt](http://pklab.med.harvard.edu/ruslan/spacemut/tracks_update/TOPMed_10kb_spectra_sdnorm.txt) contains spectra of mutational components. Each column contains a vector of relative probabilities to generate 192 sd-normalized mutation types for a mutational component. 
@@ -20,7 +19,6 @@ Before inference of mutational components each mutation rate was normalized to i
 [TOPMed_10kb_intensities_sd.txt](http://pklab.med.harvard.edu/ruslan/spacemut/tracks_update/TOPMed_10kb_intensities_sdnorm.txt) contains intensities of mutational components.  Each row represents a genomic window and contains information on its chromosome, start and end positions, as well as window-average intensities of 14 sd-normalized mutational components. 
 
 #### Original scales
-
 Below are spectra and intensities of mutational components converted in the original scales of mutation rates (by multiplying to mutation type-specific standard deviation):
 
 [TOPMed_10kb_spectra.txt](http://pklab.med.harvard.edu/ruslan/spacemut/tracks_update/TOPMed_10kb_spectra.txt) contains spectra of mutational components. Each column contains a vector of relative probabilities to generate 192 mutation types for a mutational component. 
